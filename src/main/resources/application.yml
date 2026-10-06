@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: backlog-assistant
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+  ai:
+    retry:
+        max-attempts: 1
+        on-client-errors: false
+
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        options:
+          model: gpt-4o-mini
+          temperature: 0.2
+
+server:
+  port: 8080
+
+app:
+  ai:
+    retry:
+      max-attempts: 3
+      initial-delay-ms: 500
+      multiplier: 2.0
+  rate-limit:
+    capacity: 10
+    refill-tokens: 10
+    refill-period-seconds: 60
+  pdf:
+    max-file-size-bytes: 5242880
+    max-pages: 100
+    max-extracted-characters: 100000
+    chunk-size: 12000
+    chunk-overlap: 500
+
+logging:
+  level:
+    com.fde.backlogassistant: INFO
