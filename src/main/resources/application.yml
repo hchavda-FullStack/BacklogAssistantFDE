@@ -5,7 +5,14 @@ spring:
     multipart:
       max-file-size: 5MB
       max-request-size: 5MB
+
   ai:
+    chat:
+      observations:
+        log-prompt: false
+        log-completion: false
+        include-error-logging: false
+
     retry:
         max-attempts: 1
         on-client-errors: false
@@ -40,3 +47,9 @@ app:
 logging:
   level:
     com.fde.backlogassistant: INFO
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics

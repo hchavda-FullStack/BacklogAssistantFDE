@@ -72,9 +72,22 @@ public class PromptBuilderService {
                 - Keep each user story independently implementable.
                 """
                 .formatted(
-                        request.getRequirementText(),
-                        serializeExistingBacklog(request)
+                        escapeXml(request.getRequirementText()),
+                        escapeXml(serializeExistingBacklog(request))
                 );
+    }
+
+    private String escapeXml(String value) {
+        if (value == null) {
+            return "";
+        }
+
+        return value
+                .replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;")
+                .replace("'", "&apos;");
     }
 
     private String serializeExistingBacklog(BacklogRequest request) {

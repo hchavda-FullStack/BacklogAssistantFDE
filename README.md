@@ -6,32 +6,71 @@ The application accepts plain requirements or PDF input, validates and protects 
 
 ## Key Features
 
-- REST endpoint for requirement text
-- REST endpoint for PDF requirements
-- Structured AI output using Spring AI
-- PDF validation and text extraction with Apache PDFBox
-- Large-document chunking with overlap
-- Selective retry with exponential backoff
-- In-memory token-bucket rate limiting
-- Centralized exception handling
-- Bean-validation based request validation
-- Automated unit, controller, service, and Spring context tests
-- API key supplied through an environment variable; no API key is stored in source control
+-   REST endpoint for requirement text
+-   REST endpoint for PDF requirements
+-   Structured AI output using Spring AI
+-   PDF validation and text extraction with Apache PDFBox
+-   Large-document chunking with overlap
+-   Selective retry with exponential backoff
+-   In-memory token-bucket rate limiting
+-   Centralized exception handling
+-   Bean-validation based request validation
+-   Automated unit, controller, service, and Spring context tests
+-   API key supplied through an environment variable; no API key is stored in source control
 
 ## Technology Stack
 
-| Area | Technology |
-|---|---|
-| Language | Java 17 |
-| Framework | Spring Boot 3.5.4 |
-| AI integration | Spring AI 1.0.1 |
-| AI provider | OpenAI |
-| Model | `gpt-4o-mini` |
-| PDF processing | Apache PDFBox 3.0.5 |
-| Build | Maven |
-| Testing | JUnit 5, Mockito, Spring Test / MockMvc |
-| Validation | Jakarta Bean Validation |
-| Runtime | Embedded Tomcat, port 8080 |
+Area
+
+Technology
+
+Language
+
+Java 17
+
+Framework
+
+Spring Boot 3.5.4
+
+AI integration
+
+Spring AI 1.0.1
+
+AI provider
+
+OpenAI
+
+Model
+
+`gpt-4o-mini`
+
+PDF processing
+
+Apache PDFBox 3.0.5
+
+Build
+
+Maven
+
+Testing
+
+JUnit 5, Mockito, Spring Test / MockMvc
+
+Validation
+
+Jakarta Bean Validation
+
+Runtime
+
+Embedded Tomcat, port 8080
+
+Spring Boot Actuator
+
+Health and metrics endpoints
+
+Micrometer
+
+Spring AI / application observability
 
 ## Technical Architecture
 
@@ -164,10 +203,10 @@ logging:
 
 The custom policy retries transient failures such as:
 
-- HTTP 429
-- timeouts / connection failures
-- HTTP 502, 503, and 504
-- temporarily unavailable provider errors
+-   HTTP 429
+-   timeouts / connection failures
+-   HTTP 502, 503, and 504
+-   temporarily unavailable provider errors
 
 Permanent failures such as HTTP 401, HTTP 403, invalid API keys, and invalid model errors fail immediately.
 
@@ -175,10 +214,10 @@ Permanent failures such as HTTP 401, HTTP 403, invalid API keys, and invalid mod
 
 Install:
 
-- Java 17
-- Maven 3.x
-- Git Bash on Windows
-- An OpenAI API key with available API credit
+-   Java 17
+-   Maven 3.x
+-   Git Bash on Windows
+-   An OpenAI API key with available API credit
 
 Verify:
 
@@ -241,8 +280,8 @@ Run the application first and use another Git Bash terminal for the curl command
 ### 1. Valid JSON Requirement
 
 ```bash
-curl -i -X POST "http://localhost:8080/api/backlog/generate" \
-  -H "Content-Type: application/json" \
+curl -i -X POST "http://localhost:8080/api/backlog/generate" 
+  -H "Content-Type: application/json" 
   -d '{"requirementText":"Customers who forget their password should be able to reset it using their registered email address."}'
 ```
 
@@ -257,8 +296,8 @@ The JSON response should contain structured backlog information such as a summar
 ### 2. Empty Requirement - Negative Test
 
 ```bash
-curl -i -X POST "http://localhost:8080/api/backlog/generate" \
-  -H "Content-Type: application/json" \
+curl -i -X POST "http://localhost:8080/api/backlog/generate" 
+  -H "Content-Type: application/json" 
   -d '{"requirementText":""}'
 ```
 
@@ -288,7 +327,7 @@ The AI provider should not be called for this invalid request.
 Place a PDF such as `meeting-notes.pdf` in the project root:
 
 ```bash
-curl -i -X POST "http://localhost:8080/api/backlog/generate/pdf" \
+curl -i -X POST "http://localhost:8080/api/backlog/generate/pdf" 
   -F "file=@meeting-notes.pdf"
 ```
 
@@ -309,7 +348,7 @@ echo "not a pdf" > invalid.txt
 Send it to the PDF endpoint:
 
 ```bash
-curl -i -X POST "http://localhost:8080/api/backlog/generate/pdf" \
+curl -i -X POST "http://localhost:8080/api/backlog/generate/pdf" 
   -F "file=@invalid.txt"
 ```
 
@@ -344,7 +383,7 @@ chunk-overlap: 20
 Restart the application and send the PDF again:
 
 ```bash
-curl -i -X POST "http://localhost:8080/api/backlog/generate/pdf" \
+curl -i -X POST "http://localhost:8080/api/backlog/generate/pdf" 
   -F "file=@meeting-notes.pdf"
 ```
 
@@ -391,8 +430,8 @@ Restart the application.
 Run the same valid JSON request twice immediately:
 
 ```bash
-curl -i -X POST "http://localhost:8080/api/backlog/generate" \
-  -H "Content-Type: application/json" \
+curl -i -X POST "http://localhost:8080/api/backlog/generate" 
+  -H "Content-Type: application/json" 
   -d '{"requirementText":"Customers should be able to reset their password using email."}'
 ```
 
@@ -434,8 +473,8 @@ mvn spring-boot:run
 In another terminal:
 
 ```bash
-curl -i -X POST "http://localhost:8080/api/backlog/generate" \
-  -H "Content-Type: application/json" \
+curl -i -X POST "http://localhost:8080/api/backlog/generate" 
+  -H "Content-Type: application/json" 
   -d '{"requirementText":"Customers should be able to reset their password."}'
 ```
 
@@ -502,16 +541,41 @@ mvn -Dtest=BacklogAssistantApplicationTest test
 
 ### Test Coverage by Responsibility
 
-| Test | Main responsibility |
-|---|---|
-| `BacklogControllerTest` | API/controller behavior and request handling |
-| `AIClientServiceTest` | transient retry, retry exhaustion, fail-fast permanent errors, recovery |
-| `BacklogAssistantServiceTest` | orchestration and multi-chunk processing |
-| `PdfExtractionServiceTest` | PDF validation/extraction and negative cases |
-| `PromptBuilderServiceTest` | prompt construction |
-| `RateLimitServiceTest` | token-bucket rate limiting |
-| `TextChunkingServiceTest` | document chunking and overlap behavior |
-| `BacklogAssistantApplicationTest` | Spring context / dependency-injection smoke test |
+Test
+
+Main responsibility
+
+`BacklogControllerTest`
+
+API/controller behavior and request handling
+
+`AIClientServiceTest`
+
+transient retry, retry exhaustion, fail-fast permanent errors, recovery
+
+`BacklogAssistantServiceTest`
+
+orchestration and multi-chunk processing
+
+`PdfExtractionServiceTest`
+
+PDF validation/extraction and negative cases
+
+`PromptBuilderServiceTest`
+
+prompt construction
+
+`RateLimitServiceTest`
+
+token-bucket rate limiting
+
+`TextChunkingServiceTest`
+
+document chunking and overlap behavior
+
+`BacklogAssistantApplicationTest`
+
+Spring context / dependency-injection smoke test
 
 ## Build the Deployable JAR
 
@@ -533,17 +597,45 @@ target/
 
 ## Manual Verification Matrix
 
-| Scenario | Expected result |
-|---|---|
-| Valid JSON requirement | `200` and structured backlog response |
-| Empty requirement | `400` validation error |
-| Valid PDF | `200` and structured backlog response |
-| Non-PDF upload | `400` PDF processing error |
-| Large text over chunk threshold | Multiple chunks processed |
-| Rate-limit capacity exhausted | `429` |
-| Invalid API key / HTTP 401 | Fail after application attempt 1 |
-| Transient 429 / 5xx / timeout | Retry up to configured maximum |
-| Maven automated suite | 19 tests pass |
+Scenario
+
+Expected result
+
+Valid JSON requirement
+
+`200` and structured backlog response
+
+Empty requirement
+
+`400` validation error
+
+Valid PDF
+
+`200` and structured backlog response
+
+Non-PDF upload
+
+`400` PDF processing error
+
+Large text over chunk threshold
+
+Multiple chunks processed
+
+Rate-limit capacity exhausted
+
+`429`
+
+Invalid API key / HTTP 401
+
+Fail after application attempt 1
+
+Transient 429 / 5xx / timeout
+
+Retry up to configured maximum
+
+Maven automated suite
+
+19 tests pass
 
 ## Error-Handling Strategy
 
@@ -551,10 +643,10 @@ target/
 
 Key categories include:
 
-- Request/validation errors -> 4xx
-- Unsupported or invalid PDF input -> 400
-- Rate-limit exhaustion -> 429
-- AI/provider failure -> controlled service error rather than an unhandled stack trace sent to the client
+-   Request/validation errors -> 4xx
+-   Unsupported or invalid PDF input -> 400
+-   Rate-limit exhaustion -> 429
+-   AI/provider failure -> controlled service error rather than an unhandled stack trace sent to the client
 
 Detailed internal failures are logged for diagnosis while the REST response remains controlled.
 
@@ -582,24 +674,92 @@ The token bucket prevents an uncontrolled number of expensive AI calls and retur
 
 ## Known Limitations
 
-- The current rate limiter is in memory and applies per application instance. A distributed deployment should use a shared store such as Redis with a distributed limiter.
-- Image-only/scanned PDFs require OCR; PDFBox text extraction alone is not an OCR solution.
-- Chunked AI output can require additional semantic consolidation for very large documents.
-- The project does not currently use a vector database or Retrieval-Augmented Generation.
-- Duplicate analysis is limited to the backlog context supplied to the application; it is not a semantic search across an enterprise backlog repository.
-- LLM output is probabilistic even with a low temperature and must still be reviewed.
+-   The current rate limiter is in memory and applies per application instance. A distributed deployment should use a shared store such as Redis with a distributed limiter.
+-   Image-only/scanned PDFs require OCR; PDFBox text extraction alone is not an OCR solution.
+-   Chunked AI output can require additional semantic consolidation for very large documents.
+-   The project does not currently use a vector database or Retrieval-Augmented Generation.
+-   Duplicate analysis is limited to the backlog context supplied to the application; it is not a semantic search across an enterprise backlog repository.
+-   LLM output is probabilistic even with a low temperature and must still be reviewed.
+
+Spring AI integrates with Micrometer to publish model-call metrics. Spring Boot Actuator exposes AI token usage, model metadata, operation duration, application health, HTTP metrics, JVM metrics, and other runtime measurements.
+
+## AI Observability
+
+The application uses Spring AI's built-in Micrometer observability together with Spring Boot Actuator.
+
+Spring AI automatically instruments model calls and exposes metrics including:
+
+- AI input token usage
+- AI output token usage
+- total token usage
+- requested and response model information
+- AI provider
+- model-call operation duration
+- HTTP request metrics
+- JVM/application runtime metrics
+
+Check application health:
+
+```bash
+curl "http://localhost:8080/actuator/health"
+```
+
+List available metrics:
+
+```bash
+curl "http://localhost:8080/actuator/metrics"
+```
+
+Check AI input tokens:
+
+```bash
+curl "http://localhost:8080/actuator/metrics/gen_ai.client.token.usage?tag=gen_ai.token.type:input"
+```
+
+Check AI output tokens:
+
+```bash
+curl "http://localhost:8080/actuator/metrics/gen_ai.client.token.usage?tag=gen_ai.token.type:output"
+```
+
+Check total AI tokens:
+
+```bash
+curl "http://localhost:8080/actuator/metrics/gen_ai.client.token.usage?tag=gen_ai.token.type:total"
+```
+
+Check AI model-call metrics:
+
+```bash
+curl "http://localhost:8080/actuator/metrics/gen_ai.client.operation"
+```
+
+The token metrics are cumulative for the lifetime of the running application instance. To measure a single request, restart the application before the test or compare the metric value before and after the request.
+
+Example runtime verification for one backlog-generation request:
+
+```text
+Input tokens  = 828
+Output tokens = 292
+Total tokens  = 1120
+Provider      = openai
+Requested     = gpt-4o-mini
+Response      = gpt-4o-mini-2024-07-18
+```
+
+This provides application-level AI usage visibility without depending on the OpenAI dashboard's aggregation or reporting delay.
 
 ## Future Enhancements
 
-- Redis/Bucket4j distributed rate limiting
-- OCR for scanned PDF requirements
-- Jira/Azure Boards integration
-- Vector database and embeddings for semantic duplicate detection
-- Retrieval-Augmented Generation using historical backlog content
-- Provider fallback or multiple AI model providers
-- Metrics, tracing, latency, token, and cost observability
-- Asynchronous or parallel processing for large documents where appropriate
-- Persistent audit/history of generated backlog items
+-   Redis/Bucket4j distributed rate limiting
+-   OCR for scanned PDF requirements
+-   Jira/Azure Boards integration
+-   Vector database and embeddings for semantic duplicate detection
+-   Retrieval-Augmented Generation using historical backlog content
+-   Provider fallback or multiple AI model providers
+-   Metrics, tracing, latency, token, and cost observability
+-   Asynchronous or parallel processing for large documents where appropriate
+-   Persistent audit/history of generated backlog items
 
 ## AI-Assisted Development Approach
 

@@ -31,6 +31,11 @@ class AIClientServiceTest {
         AppProperties p = props(); AtomicInteger calls = new AtomicInteger();
         AIClientService service = new AIClientService(mock(ChatClient.class), p, ms -> {}) {
             @Override protected BacklogResponse invokeModel(String s, String u) { calls.incrementAndGet(); throw new IllegalArgumentException("bad request"); }
+
+            @Override
+            boolean isTransient(Throwable throwable) {
+                return super.isTransient(throwable);
+            }
         };
         assertThrows(AiServiceException.class, () -> service.generateBacklog("s", "u")); assertEquals(1, calls.get());
     }
