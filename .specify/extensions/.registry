@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0",
+  "extensions": {
+    "bug": {
+      "version": "1.0.1",
+      "source": "local",
+      "manifest_hash": "sha256:0f8ca9b828f8855be72a17cdef1f355fba81d7173b16f349d500d2ab367384fb",
+      "enabled": true,
+      "priority": 10,
+      "registered_commands": {
+        "codex": [
+          "speckit.bug.assess",
+          "speckit.bug.fix",
+          "speckit.bug.test"
+        ]
+      },
+      "registered_skills": [],
+      "generic_artifact_hashes": {
+        ".specify/agent-commands/speckit.bug.assess.md": "2ac856af0c5391bac202a4904f99aa4c3065c10ccd6f06ae0b89e6952117c988",
+        ".specify/agent-commands/speckit.bug.fix.md": "fc0562c2c4e302be70c07f0fd992664d149bca8f6a069cea3205680d3d09150a",
+        ".specify/agent-commands/speckit.bug.test.md": "df3501e2704e5d51685ee8444c029b78c172d64100af52f77c87613aab9d1001"
+      },
+      "installed_at": "2026-10-15T02:52:43.419618+00:00"
+    }
+  }
+}

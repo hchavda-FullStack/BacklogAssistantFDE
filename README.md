@@ -522,7 +522,7 @@ mvn clean test
 Current verified result:
 
 ```text
-Tests run: 19, Failures: 0, Errors: 0, Skipped: 0
+Tests run: 22, Failures: 0, Errors: 0, Skipped: 0
 BUILD SUCCESS
 ```
 
@@ -635,7 +635,7 @@ Retry up to configured maximum
 
 Maven automated suite
 
-19 tests pass
+22 tests pass
 
 ## Error-Handling Strategy
 
@@ -672,7 +672,53 @@ The application does not send arbitrarily large documents to the AI provider. It
 
 The token bucket prevents an uncontrolled number of expensive AI calls and returns HTTP 429 when the configured capacity is exhausted.
 
-## Known Limitations
+## Spec-Driven Development
+
+The project uses GitHub Spec Kit with OpenAI Codex as the coding agent. The
+[project constitution](.specify/memory/constitution.md) defines engineering principles for:
+
+- AI-generated implementation with human review
+- Automated verification
+- Security and privacy
+- API stability and error handling
+- AI reliability and cost protection
+- Bounded input processing
+- Spec-driven changes
+
+The bug-fix workflow is:
+
+**reproduce → assess → human review → regression test → fix → verification**
+
+The `unknown-endpoint-500` bug provides a concrete example. An unmapped endpoint,
+`GET /api/does-not-exist`, originally returned HTTP 500 instead of the expected
+HTTP 404. The assessment, implemented fix, and verification evidence are recorded
+in these Spec Kit artifacts:
+
+```text
+.specify/bugs/unknown-endpoint-500/
+├── assessment.md
+├── fix.md
+└── test.md
+```
+
+Verified results:
+
+| Check | Result |
+|-------|--------|
+| Regression test before fix | 6 tests, 2 failures |
+| Focused tests after fix | 6 tests, 0 failures |
+| Full Maven suite (`mvn clean test`) | 22 tests, 0 failures, 0 errors, 0 skipped; BUILD SUCCESS |
+| Runtime verification after application restart | Unknown endpoint returns HTTP 404 |
+| Genuine unexpected application failures | Retain the sanitized HTTP 500 response |
+
+Codex assessed the bug, generated regression tests, proposed the production change,
+and performed automated verification. The developer reviewed the assessment,
+refined the generated tests to assert observable API behavior, reviewed and approved
+the production-code diff, and validated the final runtime behavior after restarting
+the application. Human review and validation determined acceptance of the generated
+changes.
+
+## Current Limitations / Production Improvements
 
 -   The current rate limiter is in memory and applies per application instance. A distributed deployment should use a shared store such as Redis with a distributed limiter.
 -   Image-only/scanned PDFs require OCR; PDFBox text extraction alone is not an OCR solution.
